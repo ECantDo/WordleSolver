@@ -1,12 +1,24 @@
 package org.ecando.ui;
 
 import javafx.application.Application;
+
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.scene.image.Image;
 
+import javafx.geometry.Insets;
+
+import org.ecando.ui.LetterButton.Colors;
+
 public class WordleApp extends Application {
+
+	private final Pane rootPane = new Pane();
+
+	private final LetterButton[] letterButtons = new LetterButton[30];
 
 	@Override
 	public void start(Stage stage) throws Exception {
@@ -19,11 +31,46 @@ public class WordleApp extends Application {
 		else
 			System.err.println("Image icon found to be null.");
 
-		// Other stuff
-		Pane root = new Pane();
-		Scene scene = new Scene(root, 600, 600);
+		// Buttons
+		this.setupButtons();
+		//
+		Scene scene = new Scene(rootPane, 600, 600);
 		stage.setTitle("Wordle Solver");
 		stage.setScene(scene);
 		stage.show();
+	}
+
+	private void setupButtons() {
+		VBox verticalLayout = new VBox(10);
+		verticalLayout.setPadding(new Insets(10));
+
+		// Reset Button
+		Button resetButton = new Button("Reset");
+		resetButton.setStyle("-fx-font-size: 15px; -fx-font-weight: bold; -fx-font-color: black;" +
+				" -fx-background-color: #e57373; ");
+		resetButton.setPrefSize(80, 30);
+
+		resetButton.setOnAction(e -> {
+
+		});
+
+		verticalLayout.getChildren().add(resetButton);
+
+
+		// Word Buttons
+		HBox row = new HBox(2);
+		for (int i = 0; i < 5; i++) {
+			LetterButton btn = new LetterButton('\0');
+			btn.setOnAction(e -> {
+				btn.cycleColor();
+			});
+			row.getChildren().add(btn);
+		}
+		row.setLayoutX(50);
+
+		verticalLayout.getChildren().add(row);
+
+		// Attach things to the pane
+		rootPane.getChildren().add(verticalLayout);
 	}
 }
