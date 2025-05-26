@@ -40,7 +40,7 @@ public class WordleApp extends Application {
 	// RUN METHOD
 	//==================================================================================================================
 	@Override
-	public void start(Stage stage) throws Exception {
+	public void start(Stage stage) {
 		// Load in icon
 		var img = getClass().getResourceAsStream("/icons/app_icon.png");
 		// Check icon exists?
@@ -117,9 +117,7 @@ public class WordleApp extends Application {
 				" -fx-background-color: #e57373; ");
 		resetButton.setPrefSize(80, 30);
 
-		resetButton.setOnAction(e -> {
-			this.resetLetterButtons();
-		});
+		resetButton.setOnAction(e -> this.resetLetterButtons());
 
 		verticalLayout.getChildren().add(resetButton);
 
@@ -127,12 +125,11 @@ public class WordleApp extends Application {
 		// Word Buttons
 		HBox[] rows = new HBox[ROWS];
 		for (int i = 0; i < rows.length; i++) {
-			final int rowIdx = i;
 			rows[i] = new HBox(2);
 
 			for (int j = 0; j < COLS; j++) {
 				LetterButton btn = new LetterButton('\0');
-				btn.setOnAction(createLetterButtonHandler(btn, rowIdx));
+				btn.setOnAction(createLetterButtonHandler(btn, i));
 
 				rows[i].getChildren().add(btn);
 				letterButtons[i][j] = btn;
