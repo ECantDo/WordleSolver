@@ -51,7 +51,7 @@ public class WordleApp extends Application {
 		resetButton.setPrefSize(80, 30);
 
 		resetButton.setOnAction(e -> {
-
+			this.resetLetterButtons();
 		});
 
 		verticalLayout.getChildren().add(resetButton);
@@ -65,6 +65,7 @@ public class WordleApp extends Application {
 				btn.cycleColor();
 			});
 			row.getChildren().add(btn);
+			letterButtons[i] = btn;
 		}
 		row.setLayoutX(50);
 
@@ -72,5 +73,15 @@ public class WordleApp extends Application {
 
 		// Attach things to the pane
 		rootPane.getChildren().add(verticalLayout);
+	}
+
+	private void resetLetterButtons() {
+		for (LetterButton button : letterButtons) {
+			if (button == null)
+				continue;
+
+			button.setLetter('\0');
+			button.setColor(Colors.DEFAULT);
+		}
 	}
 }
