@@ -30,7 +30,7 @@ public class WordleApp extends Application {
 	private final int ROWS = 6;
 	private final int COLS = 5;
 
-	private final LetterButton[] letterButtons = new LetterButton[ROWS * COLS];
+	private final LetterButton[][] letterButtons = new LetterButton[ROWS][COLS];
 
 
 	//==================================================================================================================
@@ -68,19 +68,17 @@ public class WordleApp extends Application {
 		String key = event.getText().toUpperCase();
 
 		if (event.getCode() == KeyCode.BACK_SPACE && currentInputIndex > 0) {
-			int idx = currentRowIndex * COLS + --currentInputIndex;
-			letterButtons[idx].setLetter('\0');
-			letterButtons[idx].setColor(Colors.DEFAULT);
+			letterButtons[currentRowIndex][--currentInputIndex].setLetter('\0');
+			letterButtons[currentRowIndex][currentInputIndex].setColor(Colors.DEFAULT);
 			if (currentInputIndex < 0)
 				currentInputIndex = 0;
 			return;
 		}
 
-		if (!key.matches("[A-Z]") || currentInputIndex >= COLS) return;
+		if (!key.matches("[A-Z]")) return;
 
-		int idx = currentRowIndex * COLS + currentInputIndex;
-		if (idx >= 0 && idx < letterButtons.length) {
-			letterButtons[idx].setLetter(key.charAt(0));
+		if (currentRowIndex >= 0 && currentRowIndex < ROWS && currentInputIndex >= 0 && currentInputIndex < COLS) {
+			letterButtons[currentRowIndex][currentInputIndex].setLetter(key.charAt(0));
 			currentInputIndex++;
 
 			if (currentInputIndex > COLS) {
@@ -122,7 +120,7 @@ public class WordleApp extends Application {
 					btn.cycleColor();
 				});
 				rows[i].getChildren().add(btn);
-				letterButtons[j + COLS * i] = btn;
+				letterButtons[i][j] = btn;
 			}
 			verticalLayout.getChildren().add(rows[i]);
 		}
@@ -135,12 +133,14 @@ public class WordleApp extends Application {
 		this.currentInputIndex = 0;
 		this.currentRowIndex = 0;
 
-		for (LetterButton button : letterButtons) {
-			if (button == null)
-				continue;
+		for (LetterButton[] buttonRow : letterButtons) {
+			for (LetterButton button : buttonRow) {
+				if (button == null)
+					continue;
 
-			button.setLetter('\0');
-			button.setColor(Colors.DEFAULT);
+				button.setLetter('\0');
+				button.setColor(Colors.DEFAULT);
+			}
 		}
 	}
 }
