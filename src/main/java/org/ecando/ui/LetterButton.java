@@ -4,6 +4,9 @@ import javafx.scene.control.Button;
 
 public class LetterButton extends Button {
 
+	//==================================================================================================================
+	// CONSTRUCTORS
+	//==================================================================================================================
 	public LetterButton() {
 		this(' ');
 	}
@@ -20,7 +23,25 @@ public class LetterButton extends Button {
 
 		// Apply initial letter
 		setLetter(c);
+
+		color = Colors.DEFAULT;
 	}
+
+	//==================================================================================================================
+	// VARIABLE & ENUMS
+	//==================================================================================================================
+	public enum Colors {
+		DEFAULT,
+		CORRECT,
+		INCORRECT,
+		MISPLACED,
+	}
+
+	private Colors color;
+
+	//==================================================================================================================
+	// LETTER METHODS
+	//==================================================================================================================
 
 	/**
 	 * Set the displayed character in the button.
@@ -43,5 +64,47 @@ public class LetterButton extends Button {
 		String text = getText();
 		// Check if text exists & length is 1; if yes, return letter, otherwise nothing
 		return (text != null && text.length() == 1) ? text.charAt(0) : '\0';
+	}
+
+	//==================================================================================================================
+	// COLOR METHODS
+	//==================================================================================================================
+	public void cycleColor() {
+		switch (this.color) {
+			case DEFAULT, INCORRECT -> this.color = Colors.CORRECT;
+			case CORRECT -> this.color = Colors.MISPLACED;
+			case MISPLACED -> this.color = Colors.INCORRECT;
+			default -> this.color = Colors.DEFAULT;
+		}
+		updateColor();
+	}
+
+	public void setColor(Colors color) {
+		this.color = color;
+		this.updateColor();
+	}
+
+	private void updateColor() {
+		String style = "-fx-font-size: 24px; -fx-font-weight: bold;";
+
+		switch (this.color) {
+			case CORRECT:
+				style += " -fx-background-color: #6aaa64; -fx-text-fill: white;";
+				break;
+			case INCORRECT:
+				style += " -fx-background-color: #787c7e; -fx-text-fill: white;";
+				break;
+			case MISPLACED:
+				style += " -fx-background-color: #c9b458; -fx-text-fill: white;";
+				break;
+			case DEFAULT:
+			default:
+				style += " -fx-background-color: #d3d6da; -fx-text-fill: black;";
+				break;
+
+		}
+
+		this.setStyle(style);
+
 	}
 }
