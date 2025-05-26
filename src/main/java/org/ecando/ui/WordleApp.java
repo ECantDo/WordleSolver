@@ -2,6 +2,8 @@ package org.ecando.ui;
 
 import javafx.application.Application;
 
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.input.KeyCode;
@@ -32,6 +34,7 @@ public class WordleApp extends Application {
 
 	private final LetterButton[][] letterButtons = new LetterButton[ROWS][COLS];
 
+	private boolean rowNeedsReset = true;
 
 	//==================================================================================================================
 	// RUN METHOD
@@ -75,15 +78,27 @@ public class WordleApp extends Application {
 			return;
 		}
 
+		if (event.getCode() == KeyCode.ENTER && currentRowIndex < ROWS - 1) {
+			currentRowIndex++;
+			currentInputIndex = 0;
+			rowNeedsReset = true;
+			return;
+		}
+
 		if (!key.matches("[A-Z]")) return;
 
-		if (currentRowIndex >= 0 && currentRowIndex < ROWS && currentInputIndex >= 0 && currentInputIndex < COLS) {
+		if (rowNeedsReset) {
+			for (int i = 0; i < COLS; i++) {
+				LetterButton btn = letterButtons[currentRowIndex][i];
+				btn.setLetter('\0');
+				btn.setColor(Colors.DEFAULT);
+			}
+			rowNeedsReset = false;
+		}
+
+		if (currentRowIndex >= 0 && currentRowIndex < ROWS && currentInputIndex < COLS) {
 			letterButtons[currentRowIndex][currentInputIndex].setLetter(key.charAt(0));
 			currentInputIndex++;
-
-			if (currentInputIndex > COLS) {
-				currentInputIndex = COLS;
-			}
 		}
 
 	}
@@ -98,7 +113,7 @@ public class WordleApp extends Application {
 
 		// Reset Button
 		Button resetButton = new Button("Reset");
-		resetButton.setStyle("-fx-font-size: 15px; -fx-font-weight: bold; -fx-font-color: black;" +
+		resetButton.setStyle("-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: black;" +
 				" -fx-background-color: #e57373; ");
 		resetButton.setPrefSize(80, 30);
 
@@ -112,16 +127,18 @@ public class WordleApp extends Application {
 		// Word Buttons
 		HBox[] rows = new HBox[ROWS];
 		for (int i = 0; i < rows.length; i++) {
+			final int rowIdx = i;
 			rows[i] = new HBox(2);
 
 			for (int j = 0; j < COLS; j++) {
 				LetterButton btn = new LetterButton('\0');
-				btn.setOnAction(e -> {
-					btn.cycleColor();
-				});
+				btn.setOnAction(createLetterButtonHandler(btn, rowIdx));
+
 				rows[i].getChildren().add(btn);
 				letterButtons[i][j] = btn;
 			}
+
+			// Attach to screen
 			verticalLayout.getChildren().add(rows[i]);
 		}
 
@@ -141,6 +158,39 @@ public class WordleApp extends Application {
 				button.setLetter('\0');
 				button.setColor(Colors.DEFAULT);
 			}
+		}
+	}
+
+	private void activateRow(int rowIdx) {
+		currentRowIndex = rowIdx;
+		currentInputIndex = 0;
+		rootPane.requestFocus();
+		rowNeedsReset = true;
+	}
+
+	private EventHandler<ActionEvent> createLetterButtonHandler(LetterButton btn, int rowIdx) {
+		return e -> {
+			btn.cycleColor();
+			activateRow(rowIdx);
+		};
+	}
+
+	//==================================================================================================================
+	// GET OUTPUTS
+	//==================================================================================================================
+	public String[] getWords(){
+		String[] strings = new String[ROWS];
+		for (int i = 0; i < strings.length; i++){
+			strings[i] = getWord(i);
+		}
+
+		return strings;
+	}
+
+	public String getWord(int rowIndex){
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < COLS; i++){
+
 		}
 	}
 }
