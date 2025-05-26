@@ -14,9 +14,9 @@ public class LetterButton extends Button {
 	public LetterButton(char c) {
 		super();
 		// Square button
-		setPrefSize(50, 50);
+		setPrefSize(70, 70);
 		// Make letter visible
-		setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
+		setStyle(DEFAULT_FX_STR);
 
 		// Center text
 		setFocusTraversable(true);
@@ -25,6 +25,7 @@ public class LetterButton extends Button {
 		setLetter(c);
 
 		color = Colors.DEFAULT;
+		updateColor();
 	}
 
 	//==================================================================================================================
@@ -38,6 +39,8 @@ public class LetterButton extends Button {
 	}
 
 	private Colors color;
+
+	private final String DEFAULT_FX_STR = "-fx-font-size: 27px; -fx-font-weight: bold;";
 
 	//==================================================================================================================
 	// LETTER METHODS
@@ -85,7 +88,7 @@ public class LetterButton extends Button {
 	}
 
 	private void updateColor() {
-		String style = "-fx-font-size: 24px; -fx-font-weight: bold;";
+		String style = DEFAULT_FX_STR;
 
 		switch (this.color) {
 			case CORRECT:
