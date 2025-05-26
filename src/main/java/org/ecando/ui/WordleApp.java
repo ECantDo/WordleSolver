@@ -58,18 +58,20 @@ public class WordleApp extends Application {
 
 
 		// Word Buttons
-		HBox row = new HBox(2);
-		for (int i = 0; i < 5; i++) {
-			LetterButton btn = new LetterButton('\0');
-			btn.setOnAction(e -> {
-				btn.cycleColor();
-			});
-			row.getChildren().add(btn);
-			letterButtons[i] = btn;
-		}
-		row.setLayoutX(50);
+		HBox[] rows = new HBox[6];
+		for (int i = 0; i < rows.length; i++) {
+			rows[i] = new HBox(2);
 
-		verticalLayout.getChildren().add(row);
+			for (int j = 0; j < 5; j++) {
+				LetterButton btn = new LetterButton('\0');
+				btn.setOnAction(e -> {
+					btn.cycleColor();
+				});
+				rows[i].getChildren().add(btn);
+				letterButtons[j + 5 * i] = btn;
+			}
+			verticalLayout.getChildren().add(rows[i]);
+		}
 
 		// Attach things to the pane
 		rootPane.getChildren().add(verticalLayout);
