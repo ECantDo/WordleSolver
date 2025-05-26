@@ -1,5 +1,7 @@
 plugins {
     id("java")
+    id("application")
+    id("org.openjfx.javafxplugin") version "0.1.0"
 }
 
 group = "org.ecando"
@@ -16,4 +18,19 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
+}
+
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(21))
+    }
+}
+
+application {
+    mainClass.set("org.ecando.Main")
+}
+
+javafx {
+    version = "20"
+    modules = listOf("javafx.controls", "javafx.fxml")
 }
