@@ -178,19 +178,37 @@ public class WordleApp extends Application {
 	//==================================================================================================================
 	// GET OUTPUTS
 	//==================================================================================================================
-	public String[] getWords(){
+
+	/**
+	 * Returns all words in each row, as a String array.
+	 *
+	 * @return Each element will be one rows word. Null if the word is incomplete.
+	 */
+	public String[] getWords() {
 		String[] strings = new String[ROWS];
-		for (int i = 0; i < strings.length; i++){
+		for (int i = 0; i < strings.length; i++) {
 			strings[i] = getWord(i);
 		}
 
 		return strings;
 	}
 
-	public String getWord(int rowIndex){
+	/**
+	 * Returns the word that makes up a row.
+	 *
+	 * @param rowIndex The row index to get the word from.
+	 * @return A string of said word. Null if the word is incomplete.
+	 */
+	public String getWord(int rowIndex) {
 		StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < COLS; i++){
+		for (int i = 0; i < COLS; i++) {
+			LetterButton btn = letterButtons[rowIndex][i];
 
+			char l = btn.getLetter();
+			if (l == '\0') return null;
+			sb.append(l);
 		}
+
+		return sb.toString();
 	}
 }
