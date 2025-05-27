@@ -2,10 +2,13 @@ package org.ecando.ui;
 
 import javafx.application.Application;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ListView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -16,6 +19,7 @@ import javafx.scene.input.KeyEvent;
 
 import javafx.geometry.Insets;
 
+import org.ecando.FindWords;
 import org.ecando.ui.LetterButton.Colors;
 
 
@@ -36,6 +40,9 @@ public class WordleApp extends Application {
 
 	private boolean rowNeedsReset = true;
 
+	private final ObservableList<String> wordList = FXCollections.observableArrayList();
+	private ListView<String> wordListView;
+
 	//==================================================================================================================
 	// RUN METHOD
 	//==================================================================================================================
@@ -51,9 +58,18 @@ public class WordleApp extends Application {
 			System.err.println("Image icon found to be null.");
 
 		// Buttons
-		rootPane.getChildren().add(this.setupButtons());
+		HBox buttonOutputPlane = new HBox(10);
+		buttonOutputPlane.getChildren().add(this.setupButtons());
+
+		wordListView = new ListView<>(wordList);
+		wordListView.setPrefSize(200, 500);
+		wordListView.setStyle("-fx-font-size: 16px");
+		buttonOutputPlane.getChildren().add(wordListView);
+
+		// Attach everything to the root pane
+		rootPane.getChildren().add(buttonOutputPlane);
 		//
-		Scene scene = new Scene(rootPane, 600, 600);
+		Scene scene = new Scene(rootPane, 600, 535);
 		scene.setOnKeyPressed(this::handleKeyInput);
 
 
@@ -97,12 +113,14 @@ public class WordleApp extends Application {
 		}
 
 		if (currentRowIndex >= 0 && currentRowIndex < ROWS && currentInputIndex < COLS) {
-			letterButtons[currentRowIndex][currentInputIndex].setLetter(key.charAt(0));
+			LetterButton btn = letterButtons[currentRowIndex][currentInputIndex];
+
+			btn.setLetter(key.charAt(0));
+			btn.setColor(Colors.INCORRECT);
 			currentInputIndex++;
 		}
 
 	}
-
 
 	//==================================================================================================================
 	// BUTTON METHODS
@@ -128,7 +146,7 @@ public class WordleApp extends Application {
 				" -fx-background-color: #4caf50;");
 		solveButton.setPrefSize(80, 30);
 		solveButton.setOnAction(e -> {
-			// TODO: Solve button logic
+			wordList.setAll(FindWords.findWords(this));
 		});
 		controlButtons.getChildren().add(solveButton);
 
