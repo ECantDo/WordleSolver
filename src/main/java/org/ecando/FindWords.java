@@ -3,10 +3,7 @@ package org.ecando;
 import org.ecando.ui.LetterButton;
 import org.ecando.ui.WordleApp;
 
-import java.util.Arrays;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.*;
 
 public class FindWords {
 
@@ -16,7 +13,6 @@ public class FindWords {
 		LetterButton.Colors[][] colors = app.getColors();
 		String[] words = app.getWords();
 
-		// TODO: Implement system for duplicate letters
 		StringBuilder disallowedLettersBuilder = new StringBuilder();
 		char[] requiredOrder = new char[5];
 		String[] orderedDisallowedLetters = new String[5];
@@ -47,13 +43,7 @@ public class FindWords {
 
 		String disallowedLetters = disallowedLettersBuilder.toString();
 
-//		System.out.println("Dissallowed Letters = " + disallowedLetters +
-//				"\nRequired Order = " + Arrays.toString(requiredOrder) +
-//				"\nOrdered Disallowed Letters = " + Arrays.toString(orderedDisallowedLetters));
-
-		ArrayList<String> output = filterWords(requiredOrder, orderedDisallowedLetters, disallowedLetters);
-//		System.out.println(output);
-		return output;
+		return filterWords(requiredOrder, orderedDisallowedLetters, disallowedLetters);
 	}
 
 	private static String findRequiredLetters(char[] chars, String[] strings) {
@@ -145,4 +135,74 @@ public class FindWords {
 		}
 		return possibleWords;
 	}
+
+
+	public static List<GuessScore> rankGuesses(List<String> possibleAnswers) {
+		return rankGuesses(possibleAnswers, List.of(words));
+	}
+
+	/**
+	 * Ranks guesses by how well they partition the possible answers.
+	 *
+	 * @param possibleAnswers List of words that could be the correct answer.
+	 * @param allGuesses      List of all allowed guess words.
+	 * @return A list of guesses ranked by how well they cut down the answer pool.
+	 */
+	public static List<GuessScore> rankGuesses(List<String> possibleAnswers, List<String> allGuesses) {
+		Map<String, Integer> guessScores = new HashMap<>();
+
+		for (String guess : allGuesses) {
+			Map<String, Integer> patternCounts = new HashMap<>();
+
+			for (String answer : possibleAnswers) {
+				String feedback = getFeedbackPattern(guess, answer);
+				patternCounts.put(feedback, patternCounts.getOrDefault(feedback, 0) + 1);
+			}
+
+			// Score the guess by the size of the largest pattern bucket (minimize worst-case)
+			int worstCaseSize = patternCounts.values().stream().max(Integer::compare).orElse(0);
+			guessScores.put(guess, worstCaseSize);
+		}
+
+		// Sort guesses by how small the worst-case group is
+		return guessScores.entrySet().stream()
+				.sorted(Map.Entry.comparingByValue())
+				.limit(50)
+				.map(e -> new GuessScore(e.getKey(), e.getValue()))
+				.toList();
+	}
+
+	private static String getFeedbackPattern(String guess, String answer) {
+		char[] pattern = new char[guess.length()];
+		boolean[] used = new boolean[guess.length()];
+
+		// 1. Green pass
+		for (int i = 0; i < guess.length(); i++) {
+			if (guess.charAt(i) == answer.charAt(i)) {
+				pattern[i] = 'G';
+				used[i] = true;
+			}
+		}
+
+		// 2. Yellow & Black pass
+		for (int i = 0; i < guess.length(); i++) {
+			if (pattern[i] == 'G') continue;
+
+			char g = guess.charAt(i);
+			boolean found = false;
+			for (int j = 0; j < answer.length(); j++) {
+				if (!used[j] && g == answer.charAt(j)) {
+					found = true;
+					used[j] = true;
+					break;
+				}
+			}
+
+			pattern[i] = found ? 'Y' : 'B';
+		}
+
+		return new String(pattern);
+	}
+
+
 }

@@ -8,6 +8,8 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
@@ -20,7 +22,10 @@ import javafx.scene.input.KeyEvent;
 import javafx.geometry.Insets;
 
 import org.ecando.FindWords;
+import org.ecando.GuessScore;
 import org.ecando.ui.LetterButton.Colors;
+
+import java.util.List;
 
 
 public class WordleApp extends Application {
@@ -43,6 +48,9 @@ public class WordleApp extends Application {
 	private final ObservableList<String> wordList = FXCollections.observableArrayList();
 	private ListView<String> wordListView;
 
+	private final ObservableList<GuessScore> guessList = FXCollections.observableArrayList();
+	private ListView<GuessScore> guessListView;
+
 	//==================================================================================================================
 	// RUN METHOD
 	//==================================================================================================================
@@ -61,15 +69,72 @@ public class WordleApp extends Application {
 		HBox buttonOutputPlane = new HBox(10);
 		buttonOutputPlane.getChildren().add(this.setupButtons());
 
-		wordListView = new ListView<>(wordList);
-		wordListView.setPrefSize(200, 500);
-		wordListView.setStyle("-fx-font-size: 16px");
-		buttonOutputPlane.getChildren().add(wordListView);
+		{
+			VBox possibleWordPane = new VBox(10);
+
+			Label possibleWordPaneLabel = new Label("Possible Words");
+			possibleWordPaneLabel.setStyle("-fx-font-size: 20px; -fx-font-weight: bold;");
+			possibleWordPaneLabel.setPrefHeight(40);
+
+
+			wordListView = new ListView<>(wordList);
+			wordListView.setPrefSize(200, 472);
+			wordListView.setStyle("-fx-font-size: 16px;");
+			possibleWordPane.getChildren().addAll(possibleWordPaneLabel, wordListView);
+
+			buttonOutputPlane.getChildren().add(possibleWordPane);
+		}
+
+		{
+			VBox decentGuessPane = new VBox(10);
+
+			Label possibleWordPaneLabel = new Label("Decent Guesses");
+			possibleWordPaneLabel.setStyle("-fx-font-size: 20px; -fx-font-weight: bold;");
+			possibleWordPaneLabel.setPrefHeight(40);
+
+
+			guessListView = new ListView<>(guessList);
+			guessListView.setPrefSize(200, 472);
+
+			guessListView.setCellFactory(listView -> new ListCell<>() {
+				@Override
+				protected void updateItem(GuessScore item, boolean empty) {
+					super.updateItem(item, empty);
+
+					if (empty || item == null) {
+						setGraphic(null);
+						setText(null);
+					} else {
+						//create the bar
+						double normalizedScore = Math.min(1.0, item.score / 20.0); //  todo; change the max
+						String barColor = item.score <= 2 ? "#4caf50" : item.score <= 5 ? "#ffc107" : "#e57373";
+
+						Label barLabel = new Label(String.valueOf(item.score));
+						barLabel.setStyle("-fx-text-fill: white; -fx-font-size: 12px; -fx-font-weight: bold;");
+						barLabel.setMinWidth(30);
+						barLabel.setMaxWidth(30);
+						barLabel.setPrefHeight(20);
+						barLabel.setStyle("-fx-background-color: " + barColor + "; -fx-alignment: center; -fx-text-fill: white;");
+
+						Label label = new Label(item.word);
+						label.setStyle("-fx-font-size: 16px;");
+
+						HBox hbox = new HBox(5, barLabel, label);
+						setGraphic(hbox);
+					}
+				}
+			});
+
+			decentGuessPane.getChildren().addAll(possibleWordPaneLabel, guessListView);
+
+			buttonOutputPlane.getChildren().add(decentGuessPane);
+		}
+
 
 		// Attach everything to the root pane
 		rootPane.getChildren().add(buttonOutputPlane);
 		//
-		Scene scene = new Scene(rootPane, 600, 535);
+		Scene scene = new Scene(rootPane, 807, 535);
 		scene.setOnKeyPressed(this::handleKeyInput);
 
 
@@ -149,6 +214,7 @@ public class WordleApp extends Application {
 		resetButton.setOnAction(e -> {
 			this.wordList.clear();
 			this.resetLetterButtons();
+			this.guessList.clear();
 		});
 		controlButtons.getChildren().add(resetButton);
 
@@ -157,7 +223,11 @@ public class WordleApp extends Application {
 		solveButton.setStyle("-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: white;" +
 				" -fx-background-color: #4caf50;");
 		solveButton.setPrefSize(80, 30);
-		solveButton.setOnAction(e -> wordList.setAll(FindWords.findWords(this)));
+		solveButton.setOnAction(e -> {
+			List<String> possibleWords = FindWords.findWords(this);
+			wordList.setAll(possibleWords);
+			guessList.setAll(FindWords.rankGuesses(possibleWords));
+		});
 		controlButtons.getChildren().add(solveButton);
 
 		// Add control buttons to vertical layout
