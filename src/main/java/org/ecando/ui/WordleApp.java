@@ -86,6 +86,15 @@ public class WordleApp extends Application {
 	private void handleKeyInput(KeyEvent event) {
 		String key = event.getText().toUpperCase();
 
+		// If clicked on, and backspace is pressed, clear... or just backspace on index 0
+		if (event.getCode() == KeyCode.BACK_SPACE && currentInputIndex == 0) {
+			for (int i = 0; i < COLS; i++) {
+				LetterButton btn = letterButtons[currentRowIndex][i];
+				btn.setLetter('\0');
+				btn.setColor(Colors.DEFAULT);
+			}
+			return;
+		}
 		if (event.getCode() == KeyCode.BACK_SPACE && currentInputIndex > 0) {
 			letterButtons[currentRowIndex][--currentInputIndex].setLetter('\0');
 			letterButtons[currentRowIndex][currentInputIndex].setColor(Colors.DEFAULT);
