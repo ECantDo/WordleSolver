@@ -137,7 +137,10 @@ public class WordleApp extends Application {
 		resetButton.setStyle("-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: black;" +
 				" -fx-background-color: #e57373; ");
 		resetButton.setPrefSize(80, 30);
-		resetButton.setOnAction(e -> this.resetLetterButtons());
+		resetButton.setOnAction(e -> {
+			this.wordList.clear();
+			this.resetLetterButtons();
+		});
 		controlButtons.getChildren().add(resetButton);
 
 		// Solve button
@@ -239,7 +242,7 @@ public class WordleApp extends Application {
 			sb.append(l);
 		}
 
-		return sb.toString();
+		return sb.toString().toLowerCase();
 	}
 
 	/**
