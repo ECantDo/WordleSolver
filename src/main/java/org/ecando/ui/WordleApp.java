@@ -148,9 +148,7 @@ public class WordleApp extends Application {
 		solveButton.setStyle("-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: white;" +
 				" -fx-background-color: #4caf50;");
 		solveButton.setPrefSize(80, 30);
-		solveButton.setOnAction(e -> {
-			wordList.setAll(FindWords.findWords(this));
-		});
+		solveButton.setOnAction(e -> wordList.setAll(FindWords.findWords(this)));
 		controlButtons.getChildren().add(solveButton);
 
 		// Add control buttons to vertical layout
