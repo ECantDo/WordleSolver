@@ -2,6 +2,7 @@ package org.ecando;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -14,7 +15,7 @@ public class ReadInWords {
 	 * @return Returns a String array containing all the words, without the new line characters at the end.
 	 */
 	public static String[] readInWords() {
-		return readInWords("E:\\Data Files\\words\\Words-5Letters.txt");
+		return readInWords("Words-5Letters.txt");
 	}
 
 	/**
@@ -27,19 +28,19 @@ public class ReadInWords {
 		if (fileName == null)
 			throw new RuntimeException("fileName cannot be null");
 
-		File wordFile = new File(fileName);
-		Scanner wordScanner;
-		try {
-			wordScanner = new Scanner(wordFile);
-		} catch (FileNotFoundException e) {
-			throw new RuntimeException(e);
+		// Use getResourceAsStream to read file from resources folder (inside jar or classes dir)
+		InputStream is = ReadInWords.class.getResourceAsStream(fileName.startsWith("/") ? fileName : "/" + fileName);
+		if (is == null) {
+			throw new RuntimeException("Resource not found: " + fileName);
 		}
 
+		Scanner wordScanner = new Scanner(is);
 		ArrayList<String> words = new ArrayList<>();
-		while (wordScanner.hasNext()) {
+		while (wordScanner.hasNextLine()) {
 			String word = wordScanner.nextLine();
 			words.add(word.toLowerCase().strip());
 		}
+		wordScanner.close();
 
 		return words.toArray(new String[0]);
 	}

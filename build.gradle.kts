@@ -2,10 +2,12 @@ plugins {
     id("java")
     id("application")
     id("org.openjfx.javafxplugin") version "0.1.0"
+    id("com.github.johnrengelman.shadow") version "8.1.1" // Shadow plugin for fat JAR
+
 }
 
 group = "org.ecando"
-version = "1.0-SNAPSHOT"
+version = "1.0"
 
 repositories {
     mavenCentral()
@@ -33,4 +35,16 @@ application {
 javafx {
     version = "20"
     modules = listOf("javafx.controls", "javafx.fxml")
+}
+
+
+// Shadow plugin creates a fat JAR with dependencies bundled
+tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
+    archiveBaseName.set("WordleSolver")
+    archiveVersion.set("1.0")
+    archiveClassifier.set("")
+    mergeServiceFiles()
+    manifest {
+        attributes["Main-Class"] = application.mainClass.get()
+    }
 }
