@@ -108,6 +108,9 @@ public class LetterButton extends Button {
 		}
 
 		this.setStyle(style);
+	}
 
+	public Colors getColor() {
+		return this.color;
 	}
 }
