@@ -149,6 +149,13 @@ public class FindWords {
 	 * @return A list of guesses ranked by how well they cut down the answer pool.
 	 */
 	public static List<GuessScore> rankGuesses(List<String> possibleAnswers, List<String> allGuesses) {
+		if (possibleAnswers.size() == 1) {
+			// Only one possible answer; return it as the best guess with score 0
+			String onlyAnswer = possibleAnswers.getFirst();
+			return List.of(new GuessScore(onlyAnswer, 0));
+		}
+
+
 		Map<String, Integer> guessScores = new HashMap<>();
 
 		for (String guess : allGuesses) {
