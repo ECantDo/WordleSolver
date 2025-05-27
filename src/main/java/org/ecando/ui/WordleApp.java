@@ -51,7 +51,7 @@ public class WordleApp extends Application {
 			System.err.println("Image icon found to be null.");
 
 		// Buttons
-		this.setupButtons();
+		rootPane.getChildren().add(this.setupButtons());
 		//
 		Scene scene = new Scene(rootPane, 600, 600);
 		scene.setOnKeyPressed(this::handleKeyInput);
@@ -107,22 +107,37 @@ public class WordleApp extends Application {
 	//==================================================================================================================
 	// BUTTON METHODS
 	//==================================================================================================================
-	private void setupButtons() {
+	private Pane setupButtons() {
 		VBox verticalLayout = new VBox(10);
 		verticalLayout.setPadding(new Insets(10));
 
+		// Control Buttons
+		//==============================================================================================================
+		HBox controlButtons = new HBox(5);
 		// Reset Button
 		Button resetButton = new Button("Reset");
 		resetButton.setStyle("-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: black;" +
 				" -fx-background-color: #e57373; ");
 		resetButton.setPrefSize(80, 30);
-
 		resetButton.setOnAction(e -> this.resetLetterButtons());
+		controlButtons.getChildren().add(resetButton);
 
-		verticalLayout.getChildren().add(resetButton);
+		// Solve button
+		Button solveButton = new Button("Solve");
+		solveButton.setStyle("-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: white;" +
+				" -fx-background-color: #4caf50;");
+		solveButton.setPrefSize(80, 30);
+		solveButton.setOnAction(e -> {
+			// TODO: Solve button logic
+		});
+		controlButtons.getChildren().add(solveButton);
+
+		// Add control buttons to vertical layout
+		verticalLayout.getChildren().add(controlButtons);
 
 
 		// Word Buttons
+		//==============================================================================================================
 		HBox[] rows = new HBox[ROWS];
 		for (int i = 0; i < rows.length; i++) {
 			rows[i] = new HBox(2);
@@ -136,11 +151,11 @@ public class WordleApp extends Application {
 			}
 
 			// Attach to screen
+			//==============================================================================================================
 			verticalLayout.getChildren().add(rows[i]);
 		}
 
-		// Attach things to the pane
-		rootPane.getChildren().add(verticalLayout);
+		return verticalLayout;
 	}
 
 	private void resetLetterButtons() {
@@ -207,5 +222,36 @@ public class WordleApp extends Application {
 		}
 
 		return sb.toString();
+	}
+
+	/**
+	 * Returns the color states for all letters in all rows.
+	 *
+	 * @return A 2D array representing the color of each button in each row.
+	 */
+	public Colors[][] getColors() {
+		Colors[][] colors = new Colors[ROWS][];
+		for (int i = 0; i < colors.length; i++) {
+			colors[i] = getWordColors(i);
+		}
+
+		return colors;
+	}
+
+	/**
+	 * Returns the color states for all letters in a specific row.
+	 *
+	 * @param rowIndex The index of the row (0-based).
+	 * @return An array of Colors for the specified row.
+	 */
+	public Colors[] getWordColors(int rowIndex) {
+		if (letterButtons[rowIndex] == null)
+			return null;
+
+		Colors[] colors = new Colors[COLS];
+		for (int i = 0; i < colors.length; i++) {
+			colors[i] = letterButtons[rowIndex][i].getColor();
+		}
+		return colors;
 	}
 }
