@@ -110,11 +110,18 @@ public class WordleApp extends Application {
 						String barColor = item.score <= 2 ? "#4caf50" : item.score <= 5 ? "#ffc107" : "#e57373";
 
 						Label barLabel = new Label(String.valueOf(item.score));
-						barLabel.setStyle("-fx-text-fill: white; -fx-font-size: 12px; -fx-font-weight: bold;");
+//						barLabel.setStyle("-fx-text-fill: white; -fx-font-size: 12px; -fx-font-weight: bold;");
 						barLabel.setMinWidth(30);
 						barLabel.setMaxWidth(30);
 						barLabel.setPrefHeight(20);
-						barLabel.setStyle("-fx-background-color: " + barColor + "; -fx-alignment: center; -fx-text-fill: white;");
+						barLabel.setStyle(
+								"-fx-background-color: " + barColor + ";" +
+										"-fx-background-radius: 8;" +               // Rounded corners
+										"-fx-alignment: center;" +
+										"-fx-text-fill: white;" +
+										"-fx-font-size: 12px;" +
+										"-fx-font-weight: bold;"
+						);
 
 						Label label = new Label(item.word);
 						label.setStyle("-fx-font-size: 16px;");
