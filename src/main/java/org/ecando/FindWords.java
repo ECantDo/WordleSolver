@@ -172,8 +172,12 @@ public class FindWords {
 		}
 
 		// Sort guesses by how small the worst-case group is
+		Set<String> possibleSet = new HashSet<>(possibleAnswers);
+
 		return guessScores.entrySet().stream()
-				.sorted(Map.Entry.comparingByValue())
+				.sorted(Comparator
+						.comparingInt(Map.Entry<String, Integer>::getValue)
+						.thenComparing(e -> !possibleSet.contains(e.getKey())))  // true last, so in-possible comes first
 				.limit(50)
 				.map(e -> new GuessScore(e.getKey(), e.getValue()))
 				.toList();

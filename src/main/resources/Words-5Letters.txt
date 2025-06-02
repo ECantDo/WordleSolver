@@ -4103,6 +4103,7 @@ roams
 roans
 roars
 roast
+roate
 robed
 robes
 robin
