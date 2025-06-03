@@ -23,6 +23,7 @@ import javafx.geometry.Insets;
 
 import org.ecando.FindWords;
 import org.ecando.GuessScore;
+import org.ecando.ReadInWords;
 import org.ecando.ui.LetterButton.Colors;
 
 import java.util.List;
@@ -226,15 +227,7 @@ public class WordleApp extends Application {
 		controlButtons.getChildren().add(resetButton);
 
 		// Solve button
-		Button solveButton = new Button("Solve");
-		solveButton.setStyle("-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: white;" +
-				" -fx-background-color: #4caf50;");
-		solveButton.setPrefSize(80, 30);
-		solveButton.setOnAction(e -> {
-			List<String> possibleWords = FindWords.findWords(this);
-			wordList.setAll(possibleWords);
-			guessList.setAll(FindWords.rankGuesses(possibleWords));
-		});
+		Button solveButton = getSolveButton();
 		controlButtons.getChildren().add(solveButton);
 
 		// Add control buttons to vertical layout
@@ -261,6 +254,34 @@ public class WordleApp extends Application {
 		}
 
 		return verticalLayout;
+	}
+
+	private Button getSolveButton() {
+		Button solveButton = new Button("Solve");
+		solveButton.setStyle("-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: white;" +
+				" -fx-background-color: #4caf50;");
+		solveButton.setPrefSize(80, 30);
+		// ACTION
+		solveButton.setOnAction(e -> {
+			String[] words = this.getWords();
+			boolean hasWord = false;
+			for (String word : words) {
+				if (word != null) {
+					hasWord = true;
+					break;
+				}
+			}
+
+			if (hasWord) {
+				List<String> possibleWords = FindWords.findWords(this);
+				wordList.setAll(possibleWords);
+				guessList.setAll(FindWords.rankGuesses(possibleWords));
+			} else {
+				wordList.setAll(ReadInWords.getPossibleWords());
+				guessList.setAll(ReadInWords.getBlankSolveWords());
+			}
+		});
+		return solveButton;
 	}
 
 	private void resetLetterButtons() {

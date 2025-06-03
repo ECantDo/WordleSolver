@@ -1,12 +1,26 @@
 package org.ecando;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class ReadInWords {
+
+	private static String[] possibleWords;// = ReadInWords.readInPossibleWords();
+	private static GuessScore[] blankSolveWords;
+
+	public static String[] getPossibleWords() {
+		if (possibleWords == null)
+			possibleWords = readInPossibleWords();
+		return possibleWords;
+	}
+
+	public static GuessScore[] getBlankSolveWords() {
+		if (blankSolveWords == null)
+			blankSolveWords = readInBlankSolve();
+		return blankSolveWords;
+	}
+
 
 	/**
 	 * Reads in words from a text file, where each new line contains a single word.
@@ -14,8 +28,8 @@ public class ReadInWords {
 	 *
 	 * @return Returns a String array containing all the words, without the new line characters at the end.
 	 */
-	public static String[] readInWords() {
-		return readInWords("Words-5Letters.txt");
+	private static String[] readInPossibleWords() {
+		return readInPossibleWords("Words-5Letters.txt");
 	}
 
 	/**
@@ -24,7 +38,7 @@ public class ReadInWords {
 	 * @param fileName Path to the file that contains the words.
 	 * @return Returns a String array containing all the words, without the new line characters at the end.
 	 */
-	public static String[] readInWords(String fileName) {
+	private static String[] readInPossibleWords(String fileName) {
 		if (fileName == null)
 			throw new RuntimeException("fileName cannot be null");
 
@@ -43,5 +57,24 @@ public class ReadInWords {
 		wordScanner.close();
 
 		return words.toArray(new String[0]);
+	}
+
+	private static GuessScore[] readInBlankSolve() {
+		String fileName = "/BlankSolve.csv";
+		GuessScore[] words = new GuessScore[50];
+		int i = 0;
+		InputStream is = ReadInWords.class.getResourceAsStream(fileName);
+
+		if (is == null)
+			throw new RuntimeException("Resource not found: " + fileName);
+
+		Scanner wordScanner = new Scanner(is);
+		while (wordScanner.hasNextLine()) {
+			String line = wordScanner.nextLine();
+			String word = line.substring(0, 4);
+			int score = Integer.parseInt(line.substring(5, line.length() - 1));
+			words[i++] = new GuessScore(word, score);
+		}
+		return words;
 	}
 }
