@@ -107,7 +107,7 @@ public class WordleApp extends Application {
 						setText(null);
 					} else {
 						//create the bar
-						double normalizedScore = Math.min(1.0, item.score / 20.0); //  todo; change the max
+//						double normalizedScore = Math.min(1.0, item.score / 20.0); //  todo; change the max
 						String barColor = item.score <= 2 ? "#4caf50" : item.score <= 5 ? "#ffc107" : "#e57373";
 
 						Label barLabel = new Label(String.valueOf(item.score));
