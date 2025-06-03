@@ -7,7 +7,6 @@ import java.util.*;
 
 public class FindWords {
 
-	private static final String[] words = ReadInWords.readInWords();
 
 	public static ArrayList<String> findWords(WordleApp app) {
 		LetterButton.Colors[][] colors = app.getColors();
@@ -79,7 +78,7 @@ public class FindWords {
 				bannedLetters += c;
 		}
 
-		for (String word : FindWords.words) {
+		for (String word : ReadInWords.getPossibleWords()) {
 			boolean wordPossible = true;
 			for (char c : requiredLetters.toCharArray()) {
 				boolean contains = false;
@@ -136,9 +135,15 @@ public class FindWords {
 		return possibleWords;
 	}
 
-
+	/**
+	 * Ranks guesses by how well they partition the possible answers. Based on possible guesses being the full range
+	 * of possibilities.
+	 *
+	 * @param possibleAnswers List of words that could be the correct answer.
+	 * @return A list of guesses ranked by how well they cut down the answer pool.
+	 */
 	public static List<GuessScore> rankGuesses(List<String> possibleAnswers) {
-		return rankGuesses(possibleAnswers, List.of(words));
+		return rankGuesses(possibleAnswers, List.of(ReadInWords.getPossibleWords()));
 	}
 
 	/**
