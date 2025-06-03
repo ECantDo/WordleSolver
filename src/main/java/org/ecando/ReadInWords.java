@@ -71,8 +71,8 @@ public class ReadInWords {
 		Scanner wordScanner = new Scanner(is);
 		while (wordScanner.hasNextLine()) {
 			String line = wordScanner.nextLine();
-			String word = line.substring(0, 4);
-			int score = Integer.parseInt(line.substring(5, line.length() - 1));
+			String word = line.substring(0, 5);
+			int score = Integer.parseInt(line.substring(6));
 			words[i++] = new GuessScore(word, score);
 		}
 		return words;

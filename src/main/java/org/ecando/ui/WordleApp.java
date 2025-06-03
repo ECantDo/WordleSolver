@@ -266,12 +266,11 @@ public class WordleApp extends Application {
 			String[] words = this.getWords();
 			boolean hasWord = false;
 			for (String word : words) {
-				if (word != null) {
+				if (!word.isBlank()) {
 					hasWord = true;
 					break;
 				}
 			}
-
 			if (hasWord) {
 				List<String> possibleWords = FindWords.findWords(this);
 				wordList.setAll(possibleWords);
